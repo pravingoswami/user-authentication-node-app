@@ -22,11 +22,11 @@ router.post('/login', function(req, res){
         // .then(user => user ? res.json(user) : res.status('404').send())
         .then(user => {
                 if(!user){
-                    res.status('404').send()
+                    res.status('404').send('invaalid email / password')
                 }
                 // first pass the plain and after that passing the encrypted
                 bcryptjs.compare(body.password, user.password)
-                    .then(result => result ? res.json(user) : res.status('404').send('invalid password'))
+                    .then(result => result ? res.json(user) : res.status('404').send('invalid email / password'))
                     .catch(err => res.json(err))
             }
         )
