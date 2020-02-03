@@ -56,6 +56,33 @@ userSchema.pre('save', function(next){
 
 })
 
+// own static method to find user findByCredentials
+
+userSchema.statics.findByCredentials = function(email, password){
+    const User = this
+    // finding by email
+    return User.findOne({email})
+            .then(function(User){
+                    if(!User){
+                        return Promise.reject('invalid email')   
+                    } 
+                    return bcryptjs.compare(password, User.password)
+                    .then(function(result){
+                        if(result){
+                            return Promise.resolve(User)
+                        } else{
+                            return Promise.reject('invalid password')
+                        }
+                    })
+            })
+
+            .catch( function(err){
+                // we returning the promise object as return vaue
+                return Promise.reject(err)
+            } )
+}
+
+
 const User = mongoose.model('User', userSchema)
 
 module.exports = {
