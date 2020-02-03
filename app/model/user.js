@@ -45,7 +45,8 @@ const userSchema = new Schema({
 userSchema.pre('save', function(next){
     // this is refer to the conroller user
     const user = this
-    bcryptjs.genSalt(10)
+    if(user.isNew){
+        bcryptjs.genSalt(10)
         .then(salt => {
             bcryptjs.hash(user.password, salt)
                 .then(encryptedPassword => {
@@ -53,6 +54,9 @@ userSchema.pre('save', function(next){
                     next()
                 })
         })
+    } else {
+        next()
+    }
 
 })
 
@@ -64,14 +68,14 @@ userSchema.statics.findByCredentials = function(email, password){
     return User.findOne({email})
             .then(function(User){
                     if(!User){
-                        return Promise.reject('invalid email')   
+                        return Promise.reject('invalid email or password')   
                     } 
                     return bcryptjs.compare(password, User.password)
                     .then(function(result){
                         if(result){
                             return Promise.resolve(User)
                         } else{
-                            return Promise.reject('invalid password')
+                            return Promise.reject('invalid email or password')
                         }
                     })
             })
