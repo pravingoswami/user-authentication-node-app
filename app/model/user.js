@@ -34,6 +34,19 @@ const userSchema = new Schema({
         maxlength : 128
     },
 
+    // if we can create multiple token then we can allow to user to login from multiple devices
+    token : [
+        {
+            token : {
+                type : String
+            },
+            createdAt : {
+                type : Date,
+                default : Date.now()
+            }
+        }
+    ],
+
     createdAt : {
         type : Date,
         default : Date.now()
@@ -45,6 +58,7 @@ const userSchema = new Schema({
 userSchema.pre('save', function(next){
     // this is refer to the conroller user
     const user = this
+    // user.isNew() will check the user if new user then and then encrypt the password otherwise returning the next()
     if(user.isNew){
         bcryptjs.genSalt(10)
         .then(salt => {
