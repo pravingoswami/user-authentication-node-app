@@ -17,8 +17,11 @@ router.post('/login', function(req, res){
 
     const body = req.body
     User.findByCredentials(body.email, body.password)
-        .then(user => res.json(user))
-        .catch(err => res.json(err))
+        .then(user => user.generateToken())
+            // here we will send back the empty object and sending token into the header
+            // .then(token => res.setHeader('x-auth', token).send({}))
+            .then(token => res.setHeader('x-auth', token).send({}))
+            .catch(err => res.json(err))
 
 
     // finding the user by email id 

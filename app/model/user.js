@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcryptjs = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const Schema = mongoose.Schema
 mongoose.set('useCreateIndex', true)
 
@@ -100,6 +101,29 @@ userSchema.statics.findByCredentials = function(email, password){
             } )
 }
 
+
+// own instance method
+
+userSchema.methods.generateToken = function(){
+    const user = this
+    // creating the user token data
+    const tokenData = {
+        id : user._id,
+        username : user.username,
+        createdAt : new Date()
+    }
+
+    // 'jwt@123' is a secret key for the generate the token
+    const token = jwt.sign(tokenData, 'jwt@123')
+    
+    // pushing the token into the user
+    user.token.push({token})
+
+    return user.save()
+        // here we resolving the promise and send back the token information
+        .then(user => Promise.resolve(token))
+        .catch(err => Promise.reject(err))
+}
 
 const User = mongoose.model('User', userSchema)
 
