@@ -125,6 +125,18 @@ userSchema.methods.generateToken = function(){
         .catch(err => Promise.reject(err))
 }
 
+// own static method
+
+userSchema.statics.findByToken = function(token){
+    const User = this
+    let tokenData
+    try{
+        tokenData = jwt.verify(token, 'jwt@123')
+    }catch(err){
+        return Promise.reject(err)
+    }
+}
+
 const User = mongoose.model('User', userSchema)
 
 module.exports = {

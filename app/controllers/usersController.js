@@ -47,7 +47,10 @@ router.get('/account', function(req, res){
     // checking for the token passed in the header or not
     const token = req.header('x-auth')
     if(token){
-        res.send('success')
+        // own static method
+        User.findByToken(token)
+            .then(user => res.send(user))
+            .catch(err => res.status('401').send(err))
     } else {
         // 401 for unauthorised user
         res.status('401').send('failure')
