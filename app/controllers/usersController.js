@@ -41,6 +41,19 @@ router.post('/login', function(req, res){
 })
 
 
+// localhost:3000/user/account
+
+router.get('/account', function(req, res){
+    // checking for the token passed in the header or not
+    const token = req.header('x-auth')
+    if(token){
+        res.send('success')
+    } else {
+        // 401 for unauthorised user
+        res.status('401').send('failure')
+    }
+})
+
 
 //localhost:3000/user/logout
 
